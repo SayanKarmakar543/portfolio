@@ -1,4 +1,5 @@
-import { Github, Linkedin, Twitter, Heart } from "lucide-react";
+import { Github, Linkedin, Heart } from "lucide-react";
+import { DownloadPortfolio } from "@/components/DownloadPortfolio";
 
 const socialLinks = [
   { icon: Github, href: "https://github.com/SayanKarmakar543", label: "GitHub" },
@@ -6,13 +7,13 @@ const socialLinks = [
 ];
 
 const footerLinks = [
-  { href: "#about", label: "About" },
-  { href: "#skills", label: "Skills" },
-  { href: "#projects", label: "Projects" },
-  { href: "#experience", label: "Experience" },
-  { href: "#education", label: "Education" },
-  { href: "#certifications", label: "Certifications" },
-  { href: "#contact", label: "Contact" },
+  { href: "about", label: "About" },
+  { href: "skills", label: "Skills" },
+  { href: "projects", label: "Projects" },
+  { href: "experience", label: "Experience" },
+  { href: "education", label: "Education" },
+  { href: "certifications", label: "Certifications" },
+  { href: "contact", label: "Contact" },
 ];
 
 export const Footer = () => {
@@ -21,15 +22,24 @@ export const Footer = () => {
   return (
     <footer className="py-12 border-t border-border">
       <div className="container mx-auto px-6">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-          {/* Logo & Copyright */}
-          <div className="text-center md:text-left">
-            <a href="#" className="text-xl font-bold tracking-tight">
+        {/* Download Portfolio Section */}
+        <div className="flex justify-center mb-12">
+          <DownloadPortfolio />
+        </div>
+
+        <div className="flex flex-col items-center gap-8">
+          {/* Logo */}
+          <div className="text-center">
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="text-xl font-bold tracking-tight cursor-pointer"
+            >
               SK<span className="text-primary">.</span>
             </a>
-            <p className="text-sm text-muted-foreground mt-2">
-              © {currentYear} Sayan Karmakar. All rights reserved.
-            </p>
           </div>
 
           {/* Links */}
@@ -37,8 +47,12 @@ export const Footer = () => {
             {footerLinks.map((link) => (
               <a
                 key={link.href}
-                href={link.href}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                href={`#${link.href}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById(link.href)?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               >
                 {link.label}
               </a>
@@ -58,6 +72,11 @@ export const Footer = () => {
               </a>
             ))}
           </div>
+
+          {/* Copyright */}
+          <p className="text-sm text-muted-foreground text-center">
+            © {currentYear} Sayan Karmakar. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

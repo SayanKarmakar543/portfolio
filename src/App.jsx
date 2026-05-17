@@ -6,16 +6,27 @@ import { Projects } from "@/sections/Projects";
 import { Experience } from "@/sections/Experience";
 import { Education } from "@/sections/Education";
 import { Certifications } from "@/sections/Certifications";
-import { Contact } from "@/sections/Contact";
+import { Contact } from "@/sections/ContactEnhanced";
 import { Footer } from "./layout/Footer";
 import { LoadingScreen } from "@/components/LoadingScreen";
+import { ThemeProvider } from "@/components/ThemeContext";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { MetricsDashboard } from "@/components/MetricsDashboard";
+import { StickyCTA } from "@/components/StickyCTA";
+import { BackToTop } from "@/components/BackToTop";
+import { ScrollProgress } from "@/components/ScrollProgress";
+import { FeaturedProject } from "@/components/FeaturedProject";
 import { useState } from "react";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   return (
-    <>
+    <ThemeProvider>
+      <ScrollProgress />
+      <ThemeToggle />
+      <StickyCTA />
+      <BackToTop />
       {isLoading && (
         <LoadingScreen onLoadingComplete={() => setIsLoading(false)} />
       )}
@@ -27,6 +38,8 @@ function App() {
         <Navbar />
         <main>
           <Hero />
+          <FeaturedProject />
+          <MetricsDashboard />
           <About />
           <Skills />
           <Projects />
@@ -37,7 +50,7 @@ function App() {
         </main>
         <Footer />
       </div>
-    </>
+    </ThemeProvider>
   );
 }
 
