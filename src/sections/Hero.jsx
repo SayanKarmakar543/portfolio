@@ -8,7 +8,12 @@ import {
   Download,
 } from "lucide-react";
 import { AnimatedBorderButton } from "../components/AnimatedBorderButton";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { LazyImage } from "@/components/LazyImage";
+import { useInView } from "@/components/useInView";
+import { ParallaxBackground } from "@/components/ParallaxElement";
+import { ResumeModal } from "@/components/ResumeModal";
+import { TiltCard } from "@/components/TiltCard";
 
 const calculateYearsOfExperience = () => {
   const startDate = new Date(2022, 7); // August 2022
@@ -16,11 +21,23 @@ const calculateYearsOfExperience = () => {
   const years = now.getFullYear() - startDate.getFullYear();
   const months = now.getMonth() - startDate.getMonth();
   const totalMonths = years * 12 + months;
-  const totalYears = (totalMonths / 12).toFixed(1);
-  return `${totalYears}+`;
+  const totalYears = Math.floor(totalMonths / 12);
+  const remainingMonths = totalMonths % 12;
+  
+  if (totalYears === 0) {
+    return `${remainingMonths}mo`;
+  } else if (remainingMonths === 0) {
+    return `${totalYears}yr`;
+  } else {
+    return `${totalYears}yr ${remainingMonths}mo`;
+  }
 };
 
 export const Hero = () => {
+  const [heroRef, heroInView] = useInView({ threshold: 0.1 });
+  const [imageRef, imageInView] = useInView({ threshold: 0.2 });
+  const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
+  
   const dots = useMemo(() => [
     { left: 10, top: 20, duration: 20, delay: 0 },
     { left: 30, top: 40, duration: 25, delay: 1 },
@@ -55,16 +72,17 @@ export const Hero = () => {
   ], []);
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
+    <section ref={heroRef} className="relative min-h-screen flex items-center overflow-hidden">
       {/* Bg */}
-      <div className="absolute inset-0">
-        <img
+      <ParallaxBackground className="absolute inset-0">
+        <LazyImage
           src="/hero-bg.jpg"
           alt="Hero image"
           className="w-full h-full object-cover opacity-40"
+          placeholderClassName="opacity-20"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/80 to-background" />
-      </div>
+      </ParallaxBackground>
 
       {/* Green Dots */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -88,34 +106,38 @@ export const Hero = () => {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Column - Text Content */}
           <div className="space-y-8">
-            <div className="animate-fade-in">
+            <div className={`transition-all duration-700 ${heroInView ? 'animate-fade-in' : 'opacity-0'}`}>
               <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-sm text-primary">
-                <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                Product Development Engineer • Python Specialist
+                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                Actively Looking • Python Backend / GenAI / Agentic AI Engineer
               </span>
             </div>
 
             {/* Headline */}
             <div className="space-y-4">
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight animate-fade-in animation-delay-100">
+              <h1 className={`text-5xl md:text-6xl lg:text-7xl font-bold leading-tight transition-all duration-700 ${heroInView ? 'animate-fade-in animation-delay-100' : 'opacity-0'}`}>
                 Hi, I'm <span className="text-primary glow-text">Sayan Karmakar</span>
               </h1>
-              <p className="text-2xl md:text-3xl text-muted-foreground animate-fade-in animation-delay-150">
+              <p className={`text-2xl md:text-3xl text-muted-foreground transition-all duration-700 ${heroInView ? 'animate-fade-in animation-delay-150' : 'opacity-0'}`}>
                 Backend Engineer specializing in Python & FastAPI
               </p>
-              <p className="text-lg text-muted-foreground max-w-lg animate-fade-in animation-delay-200">
+              <p className={`text-lg text-muted-foreground max-w-lg transition-all duration-700 ${heroInView ? 'animate-fade-in animation-delay-200' : 'opacity-0'}`}>
                 I build scalable, performant backend systems that power enterprise applications with {calculateYearsOfExperience()} years of experience in product development.
               </p>
             </div>
 
             {/* CTAs */}
-            <div className="flex flex-wrap gap-4 animate-fade-in animation-delay-300">
+            <div className={`flex flex-wrap gap-4 transition-all duration-700 ${heroInView ? 'animate-fade-in animation-delay-300' : 'opacity-0'}`}>
               <a href="#contact">
                 <Button size="lg">
                   Contact Me <ArrowRight className="w-5 h-5" />
                 </Button>
               </a>
-              <a href="/Sayan_Karmakar_Resume.pdf" download>
+              <AnimatedBorderButton onClick={() => setIsResumeModalOpen(true)}>
+                <Download className="w-5 h-5" />
+                View Resume
+              </AnimatedBorderButton>
+              <a href="/Sayan-Resume.pdf" download="Sayan_Karmakar_Resume.pdf">
                 <AnimatedBorderButton>
                   <Download className="w-5 h-5" />
                   Download CV
@@ -124,7 +146,7 @@ export const Hero = () => {
             </div>
 
             {/* Social Links */}
-            <div className="flex items-center gap-4 animate-fade-in animation-delay-400">
+            <div className={`flex items-center gap-4 transition-all duration-700 ${heroInView ? 'animate-fade-in animation-delay-400' : 'opacity-0'}`}>
               <span className="text-sm text-muted-foreground">Follow me: </span>
               {[
                 { icon: Github, href: "https://github.com/SayanKarmakar543" },
@@ -141,7 +163,7 @@ export const Hero = () => {
             </div>
           </div>
           {/* Right Column - Profile Image */}
-          <div className="relatice animate-fade-in animation-delay-300">
+          <div ref={imageRef} className={`relative transition-all duration-700 ${imageInView ? 'animate-fade-in animation-delay-300' : 'opacity-0'}`}>
             {/* Profile Image */}
             <div className="relative max-w-md mx-auto">
               <div
@@ -150,30 +172,32 @@ export const Hero = () => {
               from-primary/30 via-transparent 
               to-primary/10 blur-2xl animate-pulse"
               />
-              <div className="relative glass rounded-3xl p-2 glow-border group">
-                <img
-                  src="/sayan-portfolio-photo.jpg"
-                  alt="Sayan Karmakar"
-                  className="w-full aspect-[4/5] object-cover rounded-2xl grayscale group-hover:grayscale-0 transition-all duration-500"
-                />
+              <TiltCard intensity={8}>
+                <div className="relative glass rounded-3xl p-2 glow-border group">
+                  <LazyImage
+                    src="/sayan-portfolio-photo.jpg"
+                    alt="Sayan Karmakar"
+                    className="w-full aspect-[4/5] object-cover rounded-2xl grayscale group-hover:grayscale-0 transition-all duration-500"
+                  />
 
-                {/* Floating Badge */}
-                <div className="absolute -bottom-4 -right-4 glass rounded-xl px-4 py-3 animate-float">
-                  <div className="flex items-center gap-3">
-                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-                    <span className="text-sm font-medium">
-                      Available for work
-                    </span>
+                  {/* Floating Badge */}
+                  <div className="absolute -bottom-4 -right-4 glass rounded-xl px-4 py-3 animate-float">
+                    <div className="flex items-center gap-3">
+                      <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+                      <span className="text-sm font-medium">
+                        Available for work
+                      </span>
+                    </div>
+                  </div>
+                  {/* Stats Badge */}
+                  <div className="absolute -top-4 -left-4 glass rounded-xl px-4 py-3 animate-float animation-delay-500">
+                    <div className="text-2xl font-bold text-primary">{calculateYearsOfExperience()}</div>
+                    <div className="text-xs text-muted-foreground">
+                      Years Exp.
+                    </div>
                   </div>
                 </div>
-                {/* Stats Badge */}
-                <div className="absolute -top-4 -left-4 glass rounded-xl px-4 py-3 animate-float animation-delay-500">
-                  <div className="text-2xl font-bold text-primary">{calculateYearsOfExperience()}</div>
-                  <div className="text-xs text-muted-foreground">
-                    Years Exp.
-                  </div>
-                </div>
-              </div>
+              </TiltCard>
             </div>
           </div>
         </div>
@@ -191,6 +215,12 @@ export const Hero = () => {
           <ChevronDown className="w-6 h-6 animate-bounce" />
         </a>
       </div>
+      
+      {/* Resume Modal */}
+      <ResumeModal 
+        isOpen={isResumeModalOpen} 
+        onClose={() => setIsResumeModalOpen(false)} 
+      />
     </section>
   );
 };

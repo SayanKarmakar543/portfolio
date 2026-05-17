@@ -1,5 +1,10 @@
 import { ArrowUpRight, Github } from "lucide-react";
 import { AnimatedBorderButton } from "@/components/AnimatedBorderButton";
+import { LazyImage } from "@/components/LazyImage";
+import { useInView } from "@/components/useInView";
+import { TiltCard } from "@/components/TiltCard";
+import { ProjectFilter, useProjectFilter } from "@/components/ProjectFilter";
+import { TechStack } from "@/components/TechLogo";
 const projects = [
   {
     title: "Recipe Management REST API",
@@ -7,8 +12,9 @@ const projects = [
       "Built a production-ready backend API using Django REST Framework for recipe and ingredient management. Implemented JWT authentication, role-based access, and interactive API documentation via Swagger. Integrated image upload and storage functionality, enabling users to attach media to recipes and improving engagement.",
     image: "/projects/project1.png",
     tags: ["Django REST Framework", "PostgreSQL", "JWT", "Swagger"],
-    link: "https://github.com/SayanKarmakar543",
+    link: "https://codemydream.in/recipe-api-app/api/docs/",
     github: "https://github.com/SayanKarmakar543",
+    liveDemo: "https://codemydream.in/recipe-api-app/api/docs/",
   },
   {
     title: "Tunify – Music Streaming Backend Application",
@@ -18,45 +24,63 @@ const projects = [
     tags: ["FastAPI", "Python", "PostgreSQL", "SQLAlchemy", "JWT", "Docker"],
     link: "https://github.com/SayanKarmakar543",
     github: "https://github.com/SayanKarmakar543",
+    liveDemo: null,
+  },
+  {
+    title: "Persona-Bot",
+    description:
+      "An AI-powered chatbot that adapts its personality and responses based on user interactions. Built with advanced NLP techniques to provide personalized conversational experiences.",
+    image: "/projects/project3.png",
+    tags: ["Python", "OpenAI", "NLP", "Hugging Face"],
+    link: "https://huggingface.co/spaces/Sayan-Karmakar/Persona-Bot",
+    github: "https://github.com/SayanKarmakar543",
+    liveDemo: "https://huggingface.co/spaces/Sayan-Karmakar/Persona-Bot",
   },
 ];
 
 export const Projects = () => {
+  const [sectionRef, sectionInView] = useInView({ threshold: 0.1 });
+  const { filteredProjects, handleFilterChange } = useProjectFilter(projects);
+  
   return (
-    <section id="projects" className="py-32 relative overflow-hidden">
+    <section ref={sectionRef} id="projects" className="py-32 relative overflow-hidden">
       {/* Bg glows */}
       <div className="absolute top-1/4 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
       <div className="absolute bottom-1/4 left-0 w-64 h-64 bg-highlight/5 rounded-full blur-3xl" />
       <div className="container mx-auto px-6 relative z-10">
         {/* Section Header */}
         <div className="text-center mx-auto max-w-3xl mb-16">
-          <span className="text-secondary-foreground text-sm font-medium tracking-wider uppercase animate-fade-in">
+          <span className={`text-secondary-foreground text-sm font-medium tracking-wider uppercase transition-all duration-700 ${sectionInView ? 'animate-fade-in' : 'opacity-0'}`}>
             Featured Work
           </span>
-          <h2 className="text-4xl md:text-5xl font-bold mt-4 mb-6 animate-fade-in animation-delay-100 text-secondary-foreground">
+          <h2 className={`text-4xl md:text-5xl font-bold mt-4 mb-6 transition-all duration-700 text-secondary-foreground ${sectionInView ? 'animate-fade-in animation-delay-100' : 'opacity-0'}`}>
             Projects that
             <span className="font-serif italic font-normal text-white">
               {" "}
               make an impact.
             </span>
           </h2>
-          <p className="text-muted-foreground animate-fade-in animation-delay-200">
+          <p className={`text-muted-foreground transition-all duration-700 ${sectionInView ? 'animate-fade-in animation-delay-200' : 'opacity-0'}`}>
             A selection of my recent work, from complex web applications to
             innovative tools that solve real-world problems.
           </p>
         </div>
 
+        {/* Project Filters */}
+        <ProjectFilter projects={projects} onFilterChange={handleFilterChange} />
+
         {/* Projects Grid */}
         <div className="grid md:grid-cols-2 gap-8">
-          {projects.map((project, idx) => (
-            <div
+          {filteredProjects.map((project, idx) => (
+            <TiltCard
               key={idx}
-              className="group glass rounded-2xl overflow-hidden animate-fade-in md:row-span-1"
-              style={{ animationDelay: `${(idx + 1) * 100}ms` }}
+              className={`group glass rounded-2xl overflow-hidden md:row-span-1 transition-all duration-700 ${sectionInView ? 'animate-fade-in' : 'opacity-0'}`}
+              style={{ animationDelay: sectionInView ? `${(idx + 1) * 100}ms` : '0ms' }}
+              intensity={5}
             >
               {/* Image */}
               <div className="relative overflow-hidden aspect-video">
-                <img
+                <LazyImage
                   src={project.image}
                   alt={project.title}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -68,15 +92,23 @@ export const Projects = () => {
                 />
                 {/* Overlay Links */}
                 <div className="absolute inset-0 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <a
-                    href={project.link}
-                    className="p-3 rounded-full glass hover:bg-primary hover:text-primary-foreground transition-all"
-                  >
-                    <ArrowUpRight className="w-5 h-5" />
-                  </a>
+                  {project.liveDemo && (
+                    <a
+                      href={project.liveDemo}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-3 rounded-full glass hover:bg-primary hover:text-primary-foreground transition-all"
+                      title="View Live Demo"
+                    >
+                      <ArrowUpRight className="w-5 h-5" />
+                    </a>
+                  )}
                   <a
                     href={project.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="p-3 rounded-full glass hover:bg-primary hover:text-primary-foreground transition-all"
+                    title="View on GitHub"
                   >
                     <Github className="w-5 h-5" />
                   </a>
@@ -99,18 +131,11 @@ export const Projects = () => {
                 <p className="text-muted-foreground text-sm">
                   {project.description}
                 </p>
-                <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag, tagIdx) => (
-                    <span
-                      key={tagIdx}
-                      className="px-4 py-1.5 rounded-full bg-surface text-xs font-medium border border-border/50 text-muted-foreground hover:border-primary/50 hover:text-primary transition-all duration-300"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+                
+                {/* Technology Stack with Logos */}
+                <TechStack technologies={project.tags} size="sm" showLabels={true} />
               </div>
-            </div>
+            </TiltCard>
           ))}
         </div>
 

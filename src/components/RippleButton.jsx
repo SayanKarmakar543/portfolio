@@ -1,9 +1,10 @@
 import { useState } from "react";
 
-export const Button = ({
-  className = "",
-  size = "default",
+export const RippleButton = ({
   children,
+  onClick,
+  className = "",
+  rippleColor = "rgba(32, 178, 166, 0.6)",
   ...props
 }) => {
   const [ripples, setRipples] = useState([]);
@@ -24,28 +25,21 @@ export const Button = ({
 
     setRipples((prev) => [...prev, newRipple]);
 
+    // Remove ripple after animation
     setTimeout(() => {
       setRipples((prev) => prev.filter((ripple) => ripple.id !== newRipple.id));
     }, 600);
 
-    if (props.onClick) props.onClick(e);
+    if (onClick) onClick(e);
   };
 
-  const baseClasses =
-    "relative overflow-hidden rounded-full font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-primary bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/25";
-
-  const sizeClasses = {
-    sm: "px-4 py-2 text-sm",
-    default: "px-6 py-3 text-base",
-    lg: "px-8 py-4 text-lg",
-  };
-  const classes = `${baseClasses} ${sizeClasses[size]} ${className}`;
-  
   return (
-    <button className={classes} {...props} onClick={handleClick}>
-      <span className="relative flex items-center justify-center gap-2 z-10">
-        {children}
-      </span>
+    <button
+      className={`ripple-button ${className}`}
+      onClick={handleClick}
+      {...props}
+    >
+      {children}
       <span className="ripple-container">
         {ripples.map((ripple) => (
           <span
@@ -56,7 +50,7 @@ export const Button = ({
               top: ripple.y,
               width: ripple.size,
               height: ripple.size,
-              backgroundColor: "rgba(255, 255, 255, 0.6)",
+              backgroundColor: rippleColor,
             }}
           />
         ))}

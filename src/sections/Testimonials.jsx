@@ -1,5 +1,7 @@
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { useState } from "react";
+import { LazyImage } from "@/components/LazyImage";
+import { useInView } from "@/components/useInView";
 
 const testimonials = [
   {
@@ -38,6 +40,7 @@ const testimonials = [
 
 export const Testimonials = () => {
   const [activeIdx, setActiveIdx] = useState(0);
+  const [sectionRef, sectionInView] = useInView({ threshold: 0.1 });
 
   const next = () => {
     setActiveIdx((prev) => (prev + 1) % testimonials.length);
@@ -49,7 +52,7 @@ export const Testimonials = () => {
     );
   };
   return (
-    <section id="testimonials" className="py-32 relative overflow-hidden">
+    <section ref={sectionRef} id="testimonials" className="py-32 relative overflow-hidden">
       <div
         className="absolute top-1/2 left-1/2
        w-[800px] h-[800px] bg-primary/5
@@ -65,16 +68,15 @@ export const Testimonials = () => {
         mx-auto mb-16"
         >
           <span
-            className="text-secondary-foreground 
+            className={`text-secondary-foreground 
           text-sm font-medium tracking-wider 
-          uppercase animate-fade-in"
+          uppercase transition-all duration-700 ${sectionInView ? 'animate-fade-in' : 'opacity-0'}`}
           >
             What People Say
           </span>
           <h2
-            className="text-4xl md:text-5xl 
-          font-bold mt-4 mb-6 animate-fade-in 
-          animation-delay-100 text-secondary-foreground"
+            className={`text-4xl md:text-5xl 
+          font-bold mt-4 mb-6 text-secondary-foreground transition-all duration-700 ${sectionInView ? 'animate-fade-in animation-delay-100' : 'opacity-0'}`}
           >
             Kind words from{" "}
             <span
@@ -90,7 +92,7 @@ export const Testimonials = () => {
         <div className="max-w-4xl mx-auto">
           <div className="relative">
             {/* Main Testimonial */}
-            <div className="glass p-8 rounded-3xl md:p-12 glow-border animate-fade-in animation-delay-200">
+            <div className={`glass p-8 rounded-3xl md:p-12 glow-border transition-all duration-700 ${sectionInView ? 'animate-fade-in animation-delay-200' : 'opacity-0'}`}>
               <div className="absolute -top-4 left-8 w-12 h-12 rounded-full bg-primary flex items-center justify-center">
                 <Quote className="w-6 h-6 text-primary-foreground" />
               </div>
@@ -100,7 +102,7 @@ export const Testimonials = () => {
               </blockquote>
 
               <div className="flex items-center gap-4">
-                <img
+                <LazyImage
                   src={testimonials[activeIdx].avatar}
                   alt={testimonials[activeIdx].author}
                   className="w-14 h-14 rounded-full object-cover ring-2 ring-primary/20"

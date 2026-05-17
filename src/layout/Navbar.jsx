@@ -3,12 +3,12 @@ import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const navLinks = [
-  { href: "#about", label: "About" },
-  { href: "#skills", label: "Skills" },
-  { href: "#projects", label: "Projects" },
-  { href: "#experience", label: "Experience" },
-  { href: "#education", label: "Education" },
-  { href: "#certifications", label: "Certifications" },
+  { href: "about", label: "About" },
+  { href: "skills", label: "Skills" },
+  { href: "projects", label: "Projects" },
+  { href: "experience", label: "Experience" },
+  { href: "education", label: "Education" },
+  { href: "certifications", label: "Certifications" },
 ];
 
 export const Navbar = () => {
@@ -34,7 +34,11 @@ export const Navbar = () => {
       <nav className="container mx-auto px-6 flex items-center justify-between">
         <a
           href="#"
-          className="text-xl font-bold tracking-tight hover:text-primary"
+          onClick={(e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className="text-xl font-bold tracking-tight hover:text-primary cursor-pointer"
         >
           SK<span className="text-primary">.</span>
         </a>
@@ -44,9 +48,13 @@ export const Navbar = () => {
           <div className="glass rounded-full px-2 py-1 flex items-center gap-1">
             {navLinks.map((link, index) => (
               <a
-                href={link.href}
+                href={`#${link.href}`}
                 key={index}
-                className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground rounded-full hover:bg-surface"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById(link.href)?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground rounded-full hover:bg-surface cursor-pointer"
               >
                 {link.label}
               </a>
@@ -54,11 +62,14 @@ export const Navbar = () => {
           </div>
         </div>
 
-        {/* CTA Button */}
         <div className="hidden md:block">
-          <a href="#contact">
+          <button
+            onClick={() => {
+              document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
             <Button size="sm">Contact Me</Button>
-          </a>
+          </button>
         </div>
 
         {/* Mobile Menu Button */}
@@ -76,17 +87,24 @@ export const Navbar = () => {
           <div className="container mx-auto px-6 py-6 flex flex-col gap-4">
             {navLinks.map((link, index) => (
               <a
-                href={link.href}
+                href={`#${link.href}`}
                 key={index}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-lg text-muted-foreground hover:text-foreground py-2"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById(link.href)?.scrollIntoView({ behavior: 'smooth' });
+                  setIsMobileMenuOpen(false);
+                }}
+                className="text-lg text-muted-foreground hover:text-foreground py-2 cursor-pointer"
               >
                 {link.label}
               </a>
             ))}
 
-            <Button onClick={() => setIsMobileMenuOpen(false)}>
-              <a href="#contact">Contact Me</a>
+            <Button onClick={() => {
+              document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+              setIsMobileMenuOpen(false);
+            }}>
+              Contact Me
             </Button>
           </div>
         </div>

@@ -1,4 +1,6 @@
 import { Code2, Lightbulb, Rocket, Users } from "lucide-react";
+import { useInView } from "@/components/useInView";
+import { TiltCard } from "@/components/TiltCard";
 
 const highlights = [
   {
@@ -27,19 +29,21 @@ const highlights = [
 ];
 
 export const About = () => {
+  const [sectionRef, sectionInView] = useInView({ threshold: 0.1 });
+  
   return (
-    <section id="about" className="py-32 relative overflow-hidden">
+    <section ref={sectionRef} id="about" className="py-32 relative overflow-hidden">
       <div className="container mx-auto px-6 relative z-10">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left Column */}
           <div className="space-y-8">
-            <div className="animate-fade-in">
+            <div className={`transition-all duration-700 ${sectionInView ? 'animate-fade-in' : 'opacity-0'}`}>
               <span className="text-secondary-foreground text-sm font-medium tracking-wider uppercase">
                 About Me
               </span>
             </div>
 
-            <h2 className="text-4xl md:text-5xl font-bold leading-tight animate-fade-in animation-delay-100 text-secondary-foreground">
+            <h2 className={`text-4xl md:text-5xl font-bold leading-tight text-secondary-foreground transition-all duration-700 ${sectionInView ? 'animate-fade-in animation-delay-100' : 'opacity-0'}`}>
               Building scalable backends,
               <span className="font-serif italic font-normal text-white">
                 {" "}
@@ -47,7 +51,7 @@ export const About = () => {
               </span>
             </h2>
 
-            <div className="space-y-4 text-muted-foreground animate-fade-in animation-delay-200">
+            <div className={`space-y-4 text-muted-foreground transition-all duration-700 ${sectionInView ? 'animate-fade-in animation-delay-200' : 'opacity-0'}`}>
               <p>
                 I'm a passionate product development engineer with over 2.5 years of
                 experience crafting enterprise-grade backend systems. My
@@ -68,7 +72,7 @@ export const About = () => {
               </p>
             </div>
 
-            <div className="glass rounded-2xl p-6 glow-border animate-fade-in animation-delay-300">
+            <div className={`glass rounded-2xl p-6 glow-border transition-all duration-700 ${sectionInView ? 'animate-fade-in animation-delay-300' : 'opacity-0'}`}>
               <p className="text-lg font-medium italic text-foreground">
                 "My mission is to create backend systems that are not just
                 functional, but truly scalable — APIs that developers love to
@@ -80,10 +84,11 @@ export const About = () => {
           {/* Right Column - Hilights */}
           <div className="grid sm:grid-cols-2 gap-6">
             {highlights.map((item, idx) => (
-              <div
+              <TiltCard
                 key={idx}
-                className="glass p-6 rounded-2xl animate-fade-in"
-                style={{ animationDelay: `${(idx + 1) * 100}ms` }}
+                className={`glass p-6 rounded-2xl transition-all duration-700 ${sectionInView ? 'animate-fade-in' : 'opacity-0'}`}
+                style={{ animationDelay: sectionInView ? `${(idx + 1) * 100}ms` : '0ms' }}
+                intensity={5}
               >
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 hover:bg-primary/20">
                   <item.icon className="w-6 h-6 text-primary" />
@@ -92,7 +97,7 @@ export const About = () => {
                 <p className="text-sm text-muted-foreground">
                   {item.description}
                 </p>
-              </div>
+              </TiltCard>
             ))}
           </div>
         </div>
