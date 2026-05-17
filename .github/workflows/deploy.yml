@@ -36,8 +36,3 @@ jobs:
       - name: Deploy to S3
         run: |
           aws s3 sync dist/ s3://codemydream.in --delete
-      
-      - name: Invalidate CloudFront cache (optional)
-        run: |
-          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
-        continue-on-error: true
